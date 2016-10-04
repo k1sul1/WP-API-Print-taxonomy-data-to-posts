@@ -10,28 +10,29 @@
 
 defined( 'ABSPATH' ) or die( 'No script kiddies please!' );
 
-add_action("rest_api_init",function(){
-  $post_types = get_post_types(); // get all post type names
+add_action("rest_api_init", function() {
+  
+  $post_types = get_post_types(); 
 
-  foreach($post_types as $post_type){
-  // loop all post types and add field "terms" to api output.
-   register_rest_field(
-    $post_type,
-    "terms",
-    array(
-     "get_callback" => function($post){
-        $taxonomies = get_post_taxonomies($post['id']);
-        $terms_and_taxonomies = [];
+  foreach($post_types as $post_type) {
+    // loop all post types and add field "terms" to api output.
+    register_rest_field(
+      $post_type,
+      "terms",
+      array(
+        "get_callback" => function($post) {
+          $taxonomies = get_post_taxonomies($post['id']);
+          $terms_and_taxonomies = [];
 
-        foreach($taxonomies as $taxonomy_name){
-          $terms_and_taxonomies[$taxonomy_name] = wp_get_post_terms($post['id'],$taxonomy_name);
+          foreach($taxonomies as $taxonomy_name) {
+            $terms_and_taxonomies[$taxonomy_name] = wp_get_post_terms($post['id'], $taxonomy_name);
+          }
+
+          return $terms_and_taxonomies; // return array with taxonomy & term data
         }
-
-        return $terms_and_taxonomies; // return array with taxonomy & term data
-      }
-    )
+      )
     );
 
- }
+  }
 
 });
